@@ -272,7 +272,12 @@
                         }
                     });
                     
-                    return temp.innerHTML;
+                    // Get the processed HTML and apply string replacements
+                    let processedHtml = temp.innerHTML;
+                    processedHtml = processedHtml.replace(/flex gap-4/g, 'flex');
+                    processedHtml = processedHtml.replace(/w-1\/2 object-cover/g, 'w-1/2 object-cover outline outline-white');
+                    
+                    return processedHtml;
                 };
 
                 return (
@@ -333,7 +338,7 @@
                                     {event.extendedProps.description && (
                                         <div>
                                             <p className="text-sm text-gray-600">Description</p>
-                                            <div className="mt-1 prose prose-sm max-w-none" 
+                                            <div className="mt-1 prose prose-sm max-w-none flex flex-col gap-4" 
                                                 dangerouslySetInnerHTML={{ __html: processDescription(event.extendedProps.description) }} />
                                         </div>
                                     )}
