@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -345,13 +344,39 @@
                                             <div className="space-y-3">
                                                 {event.extendedProps.speakers.map((speaker, i) => (
                                                     <div key={i} className="flex items-start space-x-3">
-                                                        <img 
-                                                            src={`https://fab25.fabevent.org${speaker.avatar_url}`}
-                                                            alt={speaker.title}
-                                                            className="w-12 h-12 rounded-full object-cover"
-                                                        />
+                                                        {speaker.linked_url ? (
+                                                            <a 
+                                                                href={speaker.linked_url} 
+                                                                target="_blank" 
+                                                                rel="noopener noreferrer"
+                                                                className="flex-shrink-0"
+                                                            >
+                                                                <img 
+                                                                    src={`https://fab25.fabevent.org${speaker.avatar_url}`}
+                                                                    alt={speaker.title}
+                                                                    className="w-12 h-12 rounded-full object-cover hover:opacity-80 transition-opacity"
+                                                                />
+                                                            </a>
+                                                        ) : (
+                                                            <img 
+                                                                src={`https://fab25.fabevent.org${speaker.avatar_url}`}
+                                                                alt={speaker.title}
+                                                                className="w-12 h-12 rounded-full object-cover flex-shrink-0"
+                                                            />
+                                                        )}
                                                         <div>
-                                                            <p className="font-medium">{speaker.title}</p>
+                                                            {speaker.linked_url ? (
+                                                                <a 
+                                                                    href={speaker.linked_url} 
+                                                                    target="_blank" 
+                                                                    rel="noopener noreferrer"
+                                                                    className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                                                                >
+                                                                    {speaker.title}
+                                                                </a>
+                                                            ) : (
+                                                                <p className="font-medium">{speaker.title}</p>
+                                                            )}
                                                             {speaker.bio && <p className="text-sm text-gray-600">{speaker.bio}</p>}
                                                         </div>
                                                     </div>
