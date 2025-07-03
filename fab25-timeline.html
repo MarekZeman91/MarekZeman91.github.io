@@ -132,7 +132,7 @@
             // Filter events for selected date
             const dayEvents = useMemo(() => {
                 if (!selectedDate) return [];
-                return events.filter(event => 
+                return events.filter(event =>
                     event.start && event.start.startsWith(selectedDate)
                 );
             }, [events, selectedDate]);
@@ -150,15 +150,15 @@
             // Get time slots that actually have events
             const activeTimeSlots = useMemo(() => {
                 if (!selectedDate || dayEvents.length === 0) return [];
-                
+
                 const slotsWithEvents = new Set();
-                
+
                 dayEvents.forEach(event => {
                     if (!event.start || !event.end) return;
-                    
+
                     const startTime = new Date(event.start);
                     const endTime = new Date(event.end);
-                    
+
                     // Add all slots this event spans
                     for (let time = new Date(startTime); time < endTime; time.setMinutes(time.getMinutes() + 30)) {
                         const hour = time.getHours();
@@ -169,32 +169,32 @@
                         }
                     }
                 });
-                
+
                 // Convert to array and sort
                 const sortedSlots = Array.from(slotsWithEvents).sort();
-                
+
                 // Create final slots array with gap indicators
                 const finalSlots = [];
                 let lastSlotIndex = -1;
-                
+
                 sortedSlots.forEach(slot => {
                     const currentIndex = timeSlots.indexOf(slot);
-                    
+
                     // If there's a gap, add a placeholder
                     if (lastSlotIndex !== -1 && currentIndex - lastSlotIndex > 1) {
                         // Calculate the gap range
                         const gapStart = timeSlots[lastSlotIndex + 1];
                         const gapEnd = timeSlots[currentIndex - 1];
-                        finalSlots.push({ 
-                            type: 'gap', 
-                            slot: gapStart === gapEnd ? '...' : `${gapStart}-${gapEnd}`
+                        finalSlots.push({
+                            type: 'gap',
+                            slot: '...'
                         });
                     }
-                    
+
                     finalSlots.push({ type: 'active', slot });
                     lastSlotIndex = currentIndex;
                 });
-                
+
                 return finalSlots;
             }, [dayEvents, selectedDate, timeSlots]);
 
@@ -213,31 +213,31 @@
             const getEventPosition = (event) => {
                 const startTime = new Date(event.start);
                 const endTime = new Date(event.end);
-                
+
                 const startHour = startTime.getHours();
                 const startMinute = startTime.getMinutes();
-                
+
                 // Find column index in active slots
                 const startSlot = `${startHour.toString().padStart(2, '0')}:${startMinute.toString().padStart(2, '0')}`;
-                
+
                 const startIndex = activeTimeSlots.findIndex(item => item.type === 'active' && item.slot === startSlot);
-                
+
                 if (startIndex === -1) return null;
-                
+
                 // Calculate span by counting active slots covered by the event
                 let span = 0;
                 for (let i = startIndex; i < activeTimeSlots.length; i++) {
                     const item = activeTimeSlots[i];
                     if (item.type === 'gap') continue;
-                    
+
                     const slotTime = new Date(event.start);
                     const [slotHour, slotMinute] = item.slot.split(':');
                     slotTime.setHours(parseInt(slotHour), parseInt(slotMinute), 0, 0);
-                    
+
                     if (slotTime >= endTime) break;
                     span++;
                 }
-                
+
                 return { startIndex, span: Math.max(1, span) };
             };
 
@@ -245,7 +245,7 @@
             const eventsByRoom = useMemo(() => {
                 const grouped = {};
                 rooms.forEach(room => {
-                    grouped[room] = dayEvents.filter(event => 
+                    grouped[room] = dayEvents.filter(event =>
                         event.extendedProps.rooms === room
                     );
                 });
@@ -258,11 +258,11 @@
                 // Process description HTML to prefix image sources
                 const processDescription = (html) => {
                     if (!html) return html;
-                    
+
                     // Create a temporary div to parse HTML
                     const temp = document.createElement('div');
                     temp.innerHTML = html;
-                    
+
                     // Find all images and update their src
                     const images = temp.querySelectorAll('img');
                     images.forEach(img => {
@@ -271,12 +271,12 @@
                             img.setAttribute('src', `https://fab25.fabevent.org${src.startsWith('/') ? '' : '/'}${src}`);
                         }
                     });
-                    
+
                     // Get the processed HTML and apply string replacements
                     let processedHtml = temp.innerHTML;
                     processedHtml = processedHtml.replace(/flex gap-4/g, 'flex');
                     processedHtml = processedHtml.replace(/w-1\/2 object-cover/g, 'w-1/2 object-cover outline outline-white');
-                    
+
                     return processedHtml;
                 };
 
@@ -293,28 +293,28 @@
                                     </button>
                                 </div>
                             </div>
-                                
+
                             <div className="overflow-y-auto flex-1">
                                 <div className="space-y-4 p-6">
                                     <div>
                                         <p className="text-sm text-gray-600">Date & Time</p>
                                         <p className="font-medium">{event.date_friendly} • {event.time_friendly}</p>
                                     </div>
-                                    
+
                                     {event.extendedProps.rooms && (
                                         <div>
                                             <p className="text-sm text-gray-600">Location</p>
                                             <p className="font-medium">{event.extendedProps.rooms}</p>
                                         </div>
                                     )}
-                                    
+
                                     {event.extendedProps.program_types && (
                                         <div>
                                             <p className="text-sm text-gray-600">Type</p>
                                             <p className="font-medium">{event.extendedProps.program_types}</p>
                                         </div>
                                     )}
-                                    
+
                                     {event.extendedProps.tracks && event.extendedProps.tracks.length > 0 && (
                                         <div>
                                             <p className="text-sm text-gray-600">Tracks</p>
@@ -327,22 +327,22 @@
                                             </div>
                                         </div>
                                     )}
-                                    
+
                                     {event.extendedProps.summary && (
                                         <div>
                                             <p className="text-sm text-gray-600">Summary</p>
                                             <p className="mt-1">{event.extendedProps.summary}</p>
                                         </div>
                                     )}
-                                    
+
                                     {event.extendedProps.description && (
                                         <div>
                                             <p className="text-sm text-gray-600">Description</p>
-                                            <div className="mt-1 prose prose-sm max-w-none flex flex-col gap-4" 
+                                            <div className="mt-1 prose prose-sm max-w-none flex flex-col gap-4"
                                                 dangerouslySetInnerHTML={{ __html: processDescription(event.extendedProps.description) }} />
                                         </div>
                                     )}
-                                    
+
                                     {event.extendedProps.speakers && event.extendedProps.speakers.length > 0 && (
                                         <div>
                                             <p className="text-sm text-gray-600 mb-2">Speakers</p>
@@ -350,20 +350,20 @@
                                                 {event.extendedProps.speakers.map((speaker, i) => (
                                                     <div key={i} className="flex items-start space-x-3">
                                                         {speaker.linked_url ? (
-                                                            <a 
-                                                                href={speaker.linked_url} 
-                                                                target="_blank" 
+                                                            <a
+                                                                href={speaker.linked_url}
+                                                                target="_blank"
                                                                 rel="noopener noreferrer"
                                                                 className="flex-shrink-0"
                                                             >
-                                                                <img 
+                                                                <img
                                                                     src={`https://fab25.fabevent.org${speaker.avatar_url}`}
                                                                     alt={speaker.title}
                                                                     className="w-12 h-12 rounded-full object-cover hover:opacity-80 transition-opacity"
                                                                 />
                                                             </a>
                                                         ) : (
-                                                            <img 
+                                                            <img
                                                                 src={`https://fab25.fabevent.org${speaker.avatar_url}`}
                                                                 alt={speaker.title}
                                                                 className="w-12 h-12 rounded-full object-cover flex-shrink-0"
@@ -371,9 +371,9 @@
                                                         )}
                                                         <div>
                                                             {speaker.linked_url ? (
-                                                                <a 
-                                                                    href={speaker.linked_url} 
-                                                                    target="_blank" 
+                                                                <a
+                                                                    href={speaker.linked_url}
+                                                                    target="_blank"
                                                                     rel="noopener noreferrer"
                                                                     className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
                                                                 >
@@ -389,14 +389,14 @@
                                             </div>
                                         </div>
                                     )}
-                                    
+
                                     {event.extendedProps.number_of_participants && (
                                         <div>
                                             <p className="text-sm text-gray-600">Capacity</p>
                                             <p className="font-medium">{event.extendedProps.number_of_participants} participants</p>
                                         </div>
                                     )}
-                                    
+
                                     {event.extendedProps.language && (
                                         <div>
                                             <p className="text-sm text-gray-600">Language</p>
@@ -425,12 +425,12 @@
                 <div className="h-screen p-4">
                     <div className="responsive-grid">
                         <h1 className="text-2xl font-bold title-area">FAB25 Events Timeline</h1>
-                        
+
                         <div className="date-selector gap-2">
                             <label className="block text-sm font-medium text-gray-700">
                                 Select Date
                             </label>
-                            <select 
+                            <select
                                 value={selectedDate}
                                 onChange={(e) => setSelectedDate(e.target.value)}
                                 className="block w-full md:w-auto px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -447,22 +447,22 @@
                                 ))}
                             </select>
                         </div>
-                        
-                        
+
+
                         {activeTimeSlots.length > 0 ? (
                             <div className="timeline-container border border-gray-200 rounded-lg bg-white h-full col-span-full">
                                 <table className="timeline-table">
                                     <thead>
                                         <tr>
-                                            <th className="sticky-corner bg-gray-100 border-b border-r border-gray-200 px-4 py-2 text-left text-sm font-medium text-gray-700 min-w-[160px]">
+                                            <th className="sticky-corner bg-gray-100 border-b border-r border-gray-200 px-4 py-2 text-left text-xs font-medium text-gray-700 min-w-[115px]">
                                                 Room / Time
                                             </th>
                                             {activeTimeSlots.map((item, idx) => (
-                                                <th 
-                                                    key={idx} 
+                                                <th
+                                                    key={idx}
                                                     className={`sticky-top border-b border-r border-gray-200 px-2 py-2 text-center text-xs font-medium ${
-                                                        item.type === 'gap' 
-                                                            ? 'bg-gray-200 text-gray-500 min-w-[80px]' 
+                                                        item.type === 'gap'
+                                                            ? 'bg-gray-200 text-gray-500 min-w-[20px]'
                                                             : 'bg-gray-100 text-gray-700 min-w-[160px]'
                                                     }`}
                                                 >
@@ -475,10 +475,10 @@
                                         {rooms.map(room => {
                                             const roomEvents = eventsByRoom[room] || [];
                                             const cellsRendered = new Set(); // Track which cells have been rendered
-                                            
+
                                             return (
                                                 <tr key={room}>
-                                                    <td className="sticky-left bg-white border-b border-r border-gray-200 px-4 py-2 text-sm font-medium text-gray-900">
+                                                    <td className="sticky-left bg-white border-b border-r border-gray-200 px-4 py-2 text-xs font-medium text-gray-900">
                                                         {room}
                                                     </td>
                                                     {activeTimeSlots.map((item, slotIndex) => {
@@ -486,7 +486,7 @@
                                                         if (cellsRendered.has(slotIndex)) {
                                                             return null;
                                                         }
-                                                        
+
                                                         // Gap columns are always empty
                                                         if (item.type === 'gap') {
                                                             cellsRendered.add(slotIndex);
@@ -496,27 +496,27 @@
                                                                 </td>
                                                             );
                                                         }
-                                                        
+
                                                         // Check if there's an event starting at this slot
                                                         const eventAtSlot = roomEvents.find(event => {
                                                             const pos = getEventPosition(event);
                                                             return pos && pos.startIndex === slotIndex;
                                                         });
-                                                        
+
                                                         if (eventAtSlot) {
                                                             const pos = getEventPosition(eventAtSlot);
                                                             // Mark all cells covered by this event as rendered
                                                             for (let i = slotIndex; i < slotIndex + pos.span && i < activeTimeSlots.length; i++) {
                                                                 cellsRendered.add(i);
                                                             }
-                                                            
+
                                                             return (
-                                                                <td 
+                                                                <td
                                                                     key={slotIndex}
                                                                     colSpan={Math.min(pos.span, activeTimeSlots.length - slotIndex)}
                                                                     className="border-b border-r border-gray-200 p-1"
                                                                 >
-                                                                    <div 
+                                                                    <div
                                                                         className="text-white rounded p-2 cursor-pointer hover:opacity-90 transition-opacity h-full"
                                                                         style={{ backgroundColor: eventAtSlot.backgroundColor || '#3B82F6' }}
                                                                         onClick={() => setSelectedEvent(eventAtSlot)}
@@ -531,7 +531,7 @@
                                                                 </td>
                                                             );
                                                         }
-                                                        
+
                                                         // Empty cell
                                                         cellsRendered.add(slotIndex);
                                                         return (
@@ -552,7 +552,7 @@
                             </div>
                         )}
                     </div>
-                    
+
                     <EventModal event={selectedEvent} onClose={() => setSelectedEvent(null)} />
                 </div>
             );
