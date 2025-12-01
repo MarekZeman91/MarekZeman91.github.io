@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SVG Path Inspector</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div id="root"></div>
+
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin></script>
+
+  <script type="text/babel" data-type="module">
+    // Fetch and execute the JSX file
+    fetch('./script.jsx')
+      .then(response => response.text())
+      .then(code => {
+        // Transform with Babel
+        const result = Babel.transform(code, {
+          presets: ['react'],
+          filename: 'script.jsx'
+        });
+
+        // Execute the transformed code
+        eval(result.code);
+
+        // Render the component
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(window.SVGPathInspector));
+      })
+      .catch(err => {
+        console.error('Failed to load component:', err);
+        document.getElementById('root').innerHTML = '<p style="color: red; padding: 20px;">Failed to load component. Make sure you are running a local server.</p>';
+      });
+  </script>
+</body>
+</html>
