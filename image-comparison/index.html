@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Comparison</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div id="app">
+    <div id="controls">
+      <button id="toggle-mode">Fit Images</button>
+      <button id="reset-view">Reset View</button>
+      <div id="info">
+        <div>Zoom: <span id="zoom">100</span>%</div>
+        <div>Pan: <span id="pan">0, 0</span></div>
+      </div>
+    </div>
+    <div id="container">
+      <div id="grid">
+        <div class="slot empty" id="slot">
+          <div class="canvas-wrapper">
+            <canvas></canvas>
+          </div>
+          <div class="drop-zone">
+            <div style="font-size: 48px; opacity: 0.5;">📷</div>
+            <div>Drop image here</div>
+          </div>
+          <button class="delete-btn always-visible">Delete</button>
+        </div>
+        <div id="add-btn">+</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
